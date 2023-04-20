@@ -5,6 +5,8 @@ import 'all_images_screen.dart';
 import 'display_picture_screen.dart';
 
 class CameraScreen extends StatefulWidget {
+  const CameraScreen({super.key});
+
   @override
   CameraScreenState createState() => CameraScreenState();
 }
@@ -19,7 +21,6 @@ class CameraScreenState extends State<CameraScreen> {
 
   Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
-
     final camera = cameras.first;
 
     _controller = CameraController(
@@ -41,63 +42,111 @@ class CameraScreenState extends State<CameraScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Camera'),
+        title: const Text(
+          'Camera',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: FutureBuilder(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Transform.scale(
-              scale: 1.0,
-              child: Center(
-                child: Column(
-                  children: [
-                    CameraPreview(_controller),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: 400,
-                      height: 80,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await _initializeControllerFuture;
+            return SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CameraPreview(_controller),
+                  Positioned(
+                    bottom: 20,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await _initializeControllerFuture;
 
-                          final XFile pictureFile =
-                              await _controller.takePicture();
+                              final XFile pictureFile =
+                                  await _controller.takePicture();
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DisplayPictureScreen(
-                                  imagePath: pictureFile.path),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DisplayPictureScreen(
+                                    imagePath: pictureFile.path,
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(), backgroundColor: Colors.white,
                             ),
-                          );
-                        },
-                        child: const Icon(Icons.camera_alt),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AllImagesScreen(),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.black,
                             ),
-                          );
-                        },
-                        child: const Icon(Icons.image),
-                      ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AllImagesScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              side: const BorderSide(
+                                color: Colors.grey,
+                                width: 1,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(
+                                    Icons.image,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Gallery',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),

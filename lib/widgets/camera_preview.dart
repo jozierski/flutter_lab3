@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CameraPreviewWidget extends StatelessWidget {
   final CameraController controller;
 
-  CameraPreviewWidget(this.controller);
+  const CameraPreviewWidget(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import '../widgets/full_screen_image.dart';
 
 class AllImagesScreen extends StatefulWidget {
+  const AllImagesScreen({super.key});
+
   @override
   AllImagesScreenState createState() => AllImagesScreenState();
 }
@@ -45,7 +47,7 @@ class AllImagesScreenState extends State<AllImagesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Saved Images'),
+        title: const Text('App Gallery'),
       ),
       body: GridView.count(
         crossAxisCount: 3,
@@ -55,10 +57,20 @@ class AllImagesScreenState extends State<AllImagesScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      FullScreenImageScreen(file, _imageFiles, _deleteImage),
+                  builder: (context) => FullScreenImageScreen(
+                    file,
+                    _imageFiles,
+                    _deleteImage,
+                    index: _imageFiles.indexOf(file),
+                  ),
                 ),
-              );
+              ).then((value) {
+                if (value != null && value) {
+                  setState(() {
+                    _imageFiles.remove(file);
+                  });
+                }
+              });
             },
             child: Card(
               child: Image.file(

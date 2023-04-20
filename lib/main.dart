@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: Colors.lightBlue[800],
       ),
-      home: CameraScreen(),
+      home: const CameraScreen(),
     );
   }
 }
